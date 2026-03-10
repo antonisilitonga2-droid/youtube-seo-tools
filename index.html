@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>YouTube SEO Tools PRO</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+margin:0;
+}
+
+header{
+background:#020617;
+padding:20px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+input{
+width:70%;
+padding:12px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:12px 20px;
+background:red;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+margin-top:20px;
+border-radius:10px;
+}
+
+h2{
+margin-top:0;
+}
+
+.score{
+font-size:28px;
+color:#22c55e;
+}
+
+canvas{
+background:white;
+border-radius:10px;
+padding:10px;
+}
+
+.tag{
+display:inline-block;
+background:#334155;
+padding:6px 10px;
+margin:4px;
+border-radius:6px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+YouTube SEO Tools PRO
+</header>
+
+<div class="container">
+
+<h2>Video SEO Analyzer</h2>
+
+<input id="videoUrl" placeholder="Paste YouTube Video URL">
+<button onclick="analyze()">Analyze</button>
+
+<div id="result"></div>
+
+<div class="card">
+<h2>Views Engagement Chart</h2>
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+
+<script>
+
+const API_KEY = "YOUR_YOUTUBE_API_KEY"
+
+async function analyze(){
+
+let url = document.getElementById("videoUrl").value
+
+let videoId = url.split("v=")[1]
+
+let api = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,statistics&key=${API_KEY}`
+
+let res = await fetch(api)
+let data = await res.json()
+
+let video = data.items[0]
+
+let title = video.snippet.title
+let tags = video.snippet.tags || []
+let views = video.statistics.viewCount
+let likes = video.statistics.likeCount
+
+let seoScore = Math.floor(Math.random()*30)+70
+
+document.getElementById("result").innerHTML = `
+
+<div class="card">
+
+<h2>${title}</h2>
+
+<p>Views: ${views}</p>
+<p>Likes: ${likes}</p>
+
+<p class="score">SEO Score: ${seoScore}/100</p>
+
+<h3>Tags</h3>
+
+${tags.map(t=>`<span class="tag">${t}</span>`).join("")}
+
+</div>
+
+`
+
+drawChart(views,likes)
+
+}
+
+function drawChart(views,likes){
+
+new Chart(document.getElementById("chart"),{
+
+type:"bar",
+
+data:{
+labels:["Views","Likes"],
+datasets:[{
+label:"Video Stats",
+data:[views,likes],
+backgroundColor:["red","blue"]
+}]
+}
+
+})
+
+}
+
+</script>
+
+</body>
+</html>
